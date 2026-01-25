@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Krishicare</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="hero-section">
+    <nav class="navbar">
+        <div class="logo">🚜 Krishicare</div>
+        <ul class="nav-links">
+            <li><a href="#">How it works</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero-text-container">
+        <span class="pill-badge">AI - Powered Crop Recommendation</span>
+        <h1>Grow Smarter with <br> <span class="highlight">Soil Intelligence</span></h1>
+        <p>Upload your soil image and enter your location to get crop recommendations</p>
+    </div>
+</header>
+
+<main class="floating-container">
+
+<form class="analysis-form"
+      action="/predict"
+      method="post"
+      enctype="multipart/form-data">
+
+    <h2>Analyze Your Soil</h2>
+
+    <div class="form-grid">
+
+        <div class="form-column">
+            <div class="step-title"><span class="step-num">1</span> Upload Soil Image</div>
+
+            <div class="upload-box">
+                <input type="file" name="soilImage" id="soilUpload" accept="image/*" required hidden>
+
+                <label for="soilUpload">
+                    <div class="upload-content">
+                        <span class="upload-icon-large">⬆️</span>
+                        <p><strong>Click to upload soil image</strong></p>
+                        <div class="tags">
+                            <span>JPG</span> <span>PNG</span> <span>WEBP</span>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-column">
+            <div class="step-title"><span class="step-num">2</span> Enter Location</div>
+            <div class="location-box">
+                <input type="text" name="location" placeholder="Enter location" required>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="button-container">
+        <button type="submit" class="btn-large-cta">✨ Get Recommendations</button>
+    </div>
+
+    {% if soil_type %}
+        <h3>🌱 Soil Type: {{ soil_type }}</h3>
+    {% endif %}
+
+    {% if crops %}
+        <h3>🌾 Recommended Crops</h3>
+        <ul>
+            {% for crop in crops %}
+                <li>{{ crop }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+</form>
+
+</main>
+</body>
+</html>
