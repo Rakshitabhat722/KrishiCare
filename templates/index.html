@@ -2,87 +2,589 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Krishicare</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CropWise - AI Crop Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #2F5233;
+            --accent-green: #40916c;
+            --light-green: #d8f3dc;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --white: #ffffff;
+            --bg-cream: #f9fafb;
+        }
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--white);
+            line-height: 1.6;
+        }
+
+        /* --- NAVBAR --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            background: rgba(255, 255, 255, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #eee;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            font-family: 'Playfair Display', serif;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-green);
+        }
+
+        /* --- PAGE 1: HERO SECTION --- */
+        .hero {
+            position: relative;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?q=80&w=1740&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 5%;
+            color: var(--white);
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin-top: 60px;
+        }
+
+        .ai-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            font-size: 1.1rem;
+            border: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: #22c55e;
+            color: var(--white);
+            margin-right: 1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #16a34a;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--white);
+            color: var(--white);
+        }
+
+        .btn-outline:hover {
+            background: var(--white);
+            color: var(--primary-green);
+        }
+
+        /* --- PAGE 2: FEATURES SECTION --- */
+        .features {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 6rem 5% 4rem;
+            background: var(--bg-cream);
+        }
+
+        .section-header-center {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header-center h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--light-green);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary-green);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        /* --- PAGE 3: ANALYZE SECTION --- */
+        .analyze-page {
+            min-height: 100vh;
+            padding: 6rem 5% 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--white);
+        }
+
+        .analyze-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .analyze-header {
+            margin-bottom: 3rem;
+        }
+
+        .analyze-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--text-dark);
+        }
+
+        .tool-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        /* Steps */
+        .step-label {
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--primary-green);
+            font-size: 1.1rem;
+        }
+
+        .step-number {
+            background: var(--primary-green);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        /* Upload Area */
+        .upload-wrapper {
+            position: relative;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            left: 0; top: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer; z-index: 2;
+        }
+
+        .upload-box {
+            border: 3px dashed #cbd5e1;
+            border-radius: 16px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            background: #fafafa;
+            position: relative;
+        }
+
+        .upload-wrapper:hover .upload-box {
+            border-color: var(--primary-green);
+            background: #f0fdf4;
+        }
+
+        .upload-content {
+            text-align: center;
+            pointer-events: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .file-types {
+            margin-top: 1rem;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .type-badge {
+            background: #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #4b5563;
+        }
+
+        /* Location Input */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .input-wrapper svg {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .location-input {
+            width: 100%;
+            padding: 1.2rem 1.2rem 1.2rem 3rem;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .location-input:focus {
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 4px var(--light-green);
+        }
+
+        /* CTA Button */
+        .submit-btn {
+            width: 100%;
+            margin-top: 2rem;
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 1.2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
+
+        .submit-btn:hover {
+            background-color: #1e3a24;
+            transform: translateY(-2px);
+        }
+
+        /* --- RESULTS CARD (New) --- */
+        .result-card {
+            background: #f0fdf4;
+            border: 2px solid var(--primary-green);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .result-title {
+            color: var(--primary-green);
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .result-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            background: #f1f1f1;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.8rem; }
+            .tool-grid { grid-template-columns: 1fr; }
+            .result-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .features, .analyze-page { height: auto; padding: 4rem 5%; }
+        }
+    </style>
 </head>
 <body>
 
-<header class="hero-section">
-    <nav class="navbar">
-        <div class="logo">🚜 Krishicare</div>
+    <nav>
+        <a href="/" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+            KrishiCare
+        </a>
         <ul class="nav-links">
-            <li><a href="#">How it works</a></li>
-            <li><a href="#">About</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#analyze">Analyze Soil</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
     </nav>
 
-    <div class="hero-text-container">
-        <span class="pill-badge">AI - Powered Crop Recommendation</span>
-        <h1>Grow Smarter with <br> <span class="highlight">Soil Intelligence</span></h1>
-        <p>Upload your soil image and enter your location to get crop recommendations</p>
-    </div>
-</header>
+    <header class="hero">
+        <div class="hero-content">
+            <div class="ai-badge">
+                <span>✨</span> AI-Powered Precision Agriculture
+            </div>
+            <h1>Grow Smarter with<br>Soil Intelligence</h1>
+            <p>Upload a soil image, enter your location, and discover the perfect crops for your land. We combine visual soil analysis with local climate data.</p>
+            <div class="hero-buttons">
+                <a href="#analyze" class="btn btn-primary">Start Analysis &rarr;</a>
+                <a href="#features" class="btn btn-outline">How it Works</a>
+            </div>
+        </div>
+    </header>
 
-<main class="floating-container">
+    <section id="features" class="features">
+        <div class="section-header-center">
+            <h2>Why Choose CropWise?</h2>
+            <p>We use state-of-the-art technology to optimize your harvest.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>Visual Soil Analysis</h3>
+                <p>Our AI scans your soil photo to detect texture, moisture levels, and organic composition instantly.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌦️</div>
+                <h3>Climate Integration</h3>
+                <p>We cross-reference your soil data with real-time weather patterns in your specific region.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Yield Forecasts</h3>
+                <p>Get detailed predictions on expected yield and growth timelines for recommended crops.</p>
+            </div>
+        </div>
+    </section>
 
-<form class="analysis-form"
-      action="/predict"
-      method="post"
-      enctype="multipart/form-data">
+    <section id="analyze" class="analyze-page">
+        <div class="analyze-container">
+            <div class="analyze-header">
+                <h2>Analyze Your Soil</h2>
+                {% if crop %}
+                    <p>Analysis Complete! See your recommendations below.</p>
+                {% else %}
+                    <p>Ready to plant? Upload a clear image to get started.</p>
+                {% endif %}
+            </div>
 
-    <h2>Analyze Your Soil</h2>
-
-    <div class="form-grid">
-
-        <div class="form-column">
-            <div class="step-title"><span class="step-num">1</span> Upload Soil Image</div>
-
-            <div class="upload-box">
-                <input type="file" name="soilImage" id="soilUpload" accept="image/*" required hidden>
-
-                <label for="soilUpload">
-                    <div class="upload-content">
-                        <span class="upload-icon-large">⬆️</span>
-                        <p><strong>Click to upload soil image</strong></p>
-                        <div class="tags">
-                            <span>JPG</span> <span>PNG</span> <span>WEBP</span>
+            {% if crop %}
+            
+                <div class="result-card">
+                    <h3 class="result-title">✨ Recommended Crop: {{ crop }}</h3>
+                    
+                    <div class="result-grid">
+                        <div class="result-item">
+                            <div class="result-label">Identified Soil Type</div>
+                            <div class="result-value" style="color: #d97706;">{{ soil_type }}</div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-label">Location Processed</div>
+                            <div class="result-value">{{ location }}</div>
                         </div>
                     </div>
-                </label>
-            </div>
+
+                    <p style="margin-bottom: 2rem; color: #6b7280;">
+                        Based on the soil properties of <strong>{{ soil_type }}</strong> and the environmental data for <strong>{{ location }}</strong>, we highly recommend planting <strong>{{ crop }}</strong> for the best yield.
+                    </p>
+
+                    <a href="/" class="btn btn-primary">Analyze Another Sample</a>
+                </div>
+
+            {% else %}
+
+                <form action="/predict" method="POST" enctype="multipart/form-data" class="tool-grid">
+                    
+                    <div>
+                        <div class="step-label"><span class="step-number">1</span> Upload Soil Image</div>
+                        
+                        <div class="upload-wrapper">
+                            <input type="file" name="soil_image" id="soil-image" accept="image/*" required>
+                            
+                            <div class="upload-box">
+                                <div class="upload-content">
+                                    <div class="upload-icon">📸</div>
+                                    <p style="font-size: 1.1rem; font-weight: 500; color: #374151;">Click to Upload Image</p>
+                                    <p style="color: #6b7280; margin-top: 5px;">Supports JPG, PNG, WEBP</p>
+                                    <div class="file-types">
+                                        <span class="type-badge">JPG</span>
+                                        <span class="type-badge">PNG</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="step-label"><span class="step-number">2</span> Enter Location</div>
+                        <div class="input-wrapper">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                            
+                            <input type="text" name="location" class="location-input" placeholder="e.g. Karnataka, India" required>
+                        </div>
+                        <p style="color: #6b7280; font-size: 0.9rem; line-height: 1.5; margin-bottom: 2rem;">
+                            We need your location to fetch annual rainfall, temperature, and humidity data for the most accurate crop matching.
+                        </p>
+
+                        <button type="submit" class="submit-btn">
+                            ✨ Get Recommendations
+                        </button>
+                    </div>
+                </form>
+
+            {% endif %}
         </div>
+    </section>
 
-        <div class="form-column">
-            <div class="step-title"><span class="step-num">2</span> Enter Location</div>
-            <div class="location-box">
-                <input type="text" name="location" placeholder="Enter location" required>
-            </div>
-        </div>
+    <footer>
+        <p>&copy; 2026 CropWise AI. Helping farmers grow smarter.</p>
+    </footer>
 
-    </div>
-
-    <div class="button-container">
-        <button type="submit" class="btn-large-cta">✨ Get Recommendations</button>
-    </div>
-
-    {% if soil_type %}
-        <h3>🌱 Soil Type: {{ soil_type }}</h3>
-    {% endif %}
-
-    {% if crops %}
-        <h3>🌾 Recommended Crops</h3>
-        <ul>
-            {% for crop in crops %}
-                <li>{{ crop }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-</form>
-
-</main>
 </body>
 </html>
